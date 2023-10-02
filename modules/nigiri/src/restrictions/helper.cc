@@ -1,8 +1,8 @@
-#include "motis/transfers/transfer_restrictions/helper.h"
+#include "motis/nigiri/restrictions/helper.h"
 
 namespace n = ::nigiri;
 
-namespace motis::transfers::restrictions {
+namespace motis::nigiri::restrictions {
 
 hash_map<std::string_view, n::location_idx_t>
 get_parent_location_name_to_idx_mapping(n::timetable& tt) {
@@ -31,4 +31,4 @@ get_parent_location_name_to_idx_mapping(n::timetable& tt) {
   return mapping;
 }
 
-}  // namespace motis::transfers::restrictions
+}  // namespace motis::nigiri::restrictions
