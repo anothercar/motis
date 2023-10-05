@@ -1,24 +1,8 @@
 #include "motis/nigiri/restrictions/mobility_service.h"
 
-#include <iostream>
-
-#include "cista/mmap.h"
-
-#include "motis/core/common/logging.h"
-#include "motis/nigiri/restrictions/helper.h"
-
 #include "python3.10/Python.h"
 
-#include "utl/parser/buf_reader.h"
-#include "utl/parser/cstr.h"
-#include "utl/parser/csv_range.h"
-#include "utl/parser/line_range.h"
-#include "utl/pipes/for_each.h"
-#include "utl/progress_tracker.h"
-
 namespace fs = std::filesystem;
-namespace ml = motis::logging;
-namespace n = ::nigiri;
 
 namespace motis::transfers::restrictions {
 
