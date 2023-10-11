@@ -137,6 +137,8 @@ nigiri::nigiri() : module("Next Generation Routing", "nigiri") {
         "list of GTFS-RT, format: tag|/path/to/file.pb");
   param(gtfsrt_incremental_, "gtfsrt_incremental",
         "true=incremental updates, false=forget all prev. RT updates");
+  param(db_client_id_, "db_client_id", "developers.deutschebahn.com client_id");
+  param(db_api_key_, "db_api_key", "developers.deutschebahn.com api_key");
 }
 
 nigiri::~nigiri() = default;
