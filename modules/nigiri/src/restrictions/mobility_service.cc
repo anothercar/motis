@@ -17,7 +17,6 @@
 
 #include "utl/verify.h"
 
-namespace fs = std::filesystem;
 namespace mj = motis::json;
 namespace nhc = net::http::client;
 namespace n = ::nigiri;
@@ -31,9 +30,9 @@ struct ms_parse_result {
   n::vector<nr::av_on_weekday> availabilities_;
 };
 
-std::vector<std::string> db_weekdays = {"monday",   "tuesday", "wednesday",
-                                        "thursday", "friday",  "saturday",
-                                        "sunday"};
+std::vector<std::string> const db_weekdays = {
+    "monday", "tuesday",  "wednesday", "thursday",
+    "friday", "saturday", "sunday"};
 
 std::optional<ms_parse_result> parse_db_ms_availability(
     rapidjson::Value const& ms_av) {
@@ -41,7 +40,7 @@ std::optional<ms_parse_result> parse_db_ms_availability(
   auto wd_avs = n::vector<nr::av_on_weekday>{};
 
   try {
-    mj::get_obj(ms_av, "localServiceStaff");
+    mj::get_obj(ms_av, "localServiceStaff", false);
   } catch (const std::exception& e) {
     std::ignore = e;
     return {};
@@ -104,7 +103,7 @@ ms_av_results request_mobility_service_availability(
         for (auto const& loc : locations) {
           auto const ms_availability_parsed = parse_db_ms_availability(loc);
           if (ms_availability_parsed.has_value()) {
-            auto const ms_av = ms_availability_parsed.value();
+            auto const& ms_av = ms_availability_parsed.value();
             results.emplace(ms_av.location_name_, ms_av.availabilities_);
           }
         }

@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <map>
+#include <string>
 
 #include "nigiri/restrictions/mobility_service.h"
 #include "nigiri/types.h"
