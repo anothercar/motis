@@ -9,15 +9,21 @@ bool has_key(rapidjson::Value const& parent, char const* key) {
 }
 
 rapidjson::Value const& get_value(rapidjson::Value const& parent,
-                                  char const* key) {
+                                  char const* key, bool const verbose) {
   auto const member = parent.FindMember(key);
-  utl::verify(member != parent.MemberEnd(), "missing key: {}", key);
+
+  if (verbose) {
+    utl::verify(member != parent.MemberEnd(), "missing key: {}", key);
+  } else {
+    utl::verify_silent(member != parent.MemberEnd(), "missing key: {}", key);
+  }
+
   return member->value;
 }
 
-rapidjson::Value const& get_obj(rapidjson::Value const& parent,
-                                char const* key) {
-  auto const& value = get_value(parent, key);
+rapidjson::Value const& get_obj(rapidjson::Value const& parent, char const* key,
+                                bool const verbose) {
+  auto const& value = get_value(parent, key, verbose);
   utl::verify(value.IsObject(), "not an object: {}", key);
   return value;
 }

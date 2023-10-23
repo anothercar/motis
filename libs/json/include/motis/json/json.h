@@ -15,10 +15,10 @@ namespace motis::json {
 bool has_key(rapidjson::Value const& parent, char const* key);
 
 rapidjson::Value const& get_value(rapidjson::Value const& parent,
-                                  char const* key);
+                                  char const* key, bool verbose = true);
 
-rapidjson::Value const& get_obj(rapidjson::Value const& parent,
-                                char const* key);
+rapidjson::Value const& get_obj(rapidjson::Value const& parent, char const* key,
+                                bool verbose = true);
 
 rapidjson::Value::ConstArray get_array(rapidjson::Value const& obj,
                                        char const* key);
