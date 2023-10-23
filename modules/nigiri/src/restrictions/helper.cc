@@ -4,10 +4,10 @@ namespace n = ::nigiri;
 
 namespace motis::nigiri::restrictions {
 
-hash_map<std::string_view, n::location_idx_t>
+n::hash_map<std::string_view, n::location_idx_t>
 get_parent_location_name_to_idx_mapping(n::timetable& tt) {
-  auto mapping = hash_map<std::string_view, n::location_idx_t>{};
-  auto seen_parents = set<n::location_idx_t>{};
+  auto mapping = n::hash_map<std::string_view, n::location_idx_t>{};
+  auto seen_parents = n::hash_set<n::location_idx_t>{};
 
   for (auto loc_idx = n::location_idx_t{0U};
        loc_idx < tt.locations_.ids_.size(); ++loc_idx) {
