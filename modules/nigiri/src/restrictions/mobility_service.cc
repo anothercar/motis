@@ -78,8 +78,8 @@ ms_av_results request_mobility_service_availability(
       "stations"};
 
   auto headers = nhc::request::str_map{};
-  headers.emplace("DB-Client-Id", db_client_id);
-  headers.emplace("DB-Api-Key", db_api_key);
+  headers.emplace("DB-Client-Id", db_client_id.c_str());
+  headers.emplace("DB-Api-Key", db_api_key.c_str());
 
   nhc::request req{addr, nhc::request::method::GET, headers};
 

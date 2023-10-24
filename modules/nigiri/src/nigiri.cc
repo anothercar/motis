@@ -29,6 +29,8 @@
 #include "motis/nigiri/guesser.h"
 #include "motis/nigiri/initial_permalink.h"
 #include "motis/nigiri/railviz.h"
+#include "motis/nigiri/restrictions/helper.h"
+#include "motis/nigiri/restrictions/restrictions.h"
 #include "motis/nigiri/routing.h"
 #include "motis/nigiri/station_lookup.h"
 #include "motis/nigiri/trip_to_connection.h"
@@ -38,6 +40,7 @@
 namespace fbs = flatbuffers;
 namespace fs = std::filesystem;
 namespace mm = motis::module;
+namespace mnr = motis::nigiri::restrictions;
 namespace n = nigiri;
 
 namespace motis::nigiri {
@@ -107,6 +110,7 @@ struct nigiri::impl {
   tag_lookup tags_;
   std::shared_ptr<station_lookup> station_lookup_;
   std::vector<gtfsrt> gtfsrt_;
+  std::unique_ptr<restrictions::restrictions> restrictions_;
   std::unique_ptr<guesser> guesser_;
   std::unique_ptr<railviz> railviz_;
   std::string initial_permalink_;
@@ -137,6 +141,8 @@ nigiri::nigiri() : module("Next Generation Routing", "nigiri") {
         "list of GTFS-RT, format: tag|/path/to/file.pb");
   param(gtfsrt_incremental_, "gtfsrt_incremental",
         "true=incremental updates, false=forget all prev. RT updates");
+  param(db_mobility_service_, "db_mobility_service",
+        "true=use db mobility service availability as routing restriction.");
   param(db_client_id_, "db_client_id", "developers.deutschebahn.com client_id");
   param(db_api_key_, "db_api_key", "developers.deutschebahn.com api_key");
 }
@@ -184,6 +190,10 @@ void nigiri::init(motis::module::registry& reg) {
                          << "%)";
     }
   }
+
+  update_restrictions();
+  LOG(logging::info) << "#restr: "
+                     << impl_->restrictions_->restrictions_.size();
 
   if (impl_->tt_->get()->profiles_.empty()) {
     reg.register_op("/nigiri",
@@ -332,6 +342,16 @@ void nigiri::update_gtfsrt() {
     LOG(logging::info) << impl_->tags_.get_tag_clean(endpoint.src()) << ": "
                        << stats;
   }
+}
+
+void nigiri::update_restrictions() {
+  if (db_mobility_service_) {
+    impl_->restrictions_->update_mobility_services(
+        mnr::request_mobility_service_availability(db_client_id_, db_api_key_),
+        mnr::get_parent_location_name_to_idx_mapping(*impl_->tt_->get()));
+  }
+
+  impl_->restrictions_->update(*impl_->tt_->get());
 }
 
 void nigiri::import(motis::module::import_dispatcher& reg) {
@@ -500,6 +520,8 @@ void nigiri::import(motis::module::import_dispatcher& reg) {
           impl_->railviz_ =
               std::make_unique<railviz>(impl_->tags_, (**impl_->tt_));
         }
+
+        impl_->restrictions_ = std::make_unique<restrictions::restrictions>();
 
         add_shared_data(to_res_id(mm::global_res_id::NIGIRI_TIMETABLE),
                         impl_->tt_->get());

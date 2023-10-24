@@ -25,6 +25,7 @@ struct nigiri : public motis::module::module {
 private:
   void register_gtfsrt_timer(motis::module::dispatcher&);
   void update_gtfsrt();
+  void update_restrictions();
 
   bool import_successful_{false};
 
@@ -47,6 +48,7 @@ private:
   bool gtfsrt_incremental_{false};
   std::string db_client_id_{};
   std::string db_api_key_{};
+  bool db_mobility_service_{false};
 };
 
 }  // namespace motis::nigiri
